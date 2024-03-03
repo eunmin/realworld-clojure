@@ -2,20 +2,16 @@
   (:require [clojure.spec.alpha :as s]
             [realworld.domain.command.user.value :as value]))
 
-(s/def ::created-at inst?)
-
-(s/def ::updated-at (s/nilable inst?))
-
 (s/def ::user (s/keys :req-un [::value/user-id
                                ::value/username
                                ::value/email
                                ::value/hashed-password
                                ::value/bio
                                ::value/image
-                               ::created-at
-                               ::updated-at]))
+                               ::value/created-at
+                               ::value/updated-at]))
 
-(defrecord User [id
+(defrecord User [user-id
                  username
                  email
                  hashed-password

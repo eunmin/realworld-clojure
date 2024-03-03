@@ -20,6 +20,7 @@
 
    ;; Repositories
    [realworld.infra.repository.pg-user-repository :refer [->PgUserRepository]]
+   [realworld.infra.repository.pg-query-service :refer [->PgQueryService]]
 
    ;; Gateways
    [realworld.infra.gateway.bcrypt-password-gateway :refer [->BcryptPasswordGateway]]
@@ -67,3 +68,5 @@
 (defmethod ig/init-key :gateway/jwt-token-gateway [_ {:keys [secret]}]
   (->JwtTokenGateway secret))
 
+(defmethod ig/init-key :service/query-service [_ {:keys [query-fn]}]
+  (->PgQueryService query-fn))

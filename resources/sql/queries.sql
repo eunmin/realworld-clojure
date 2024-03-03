@@ -10,10 +10,10 @@ ON CONFLICT (id) DO UPDATE SET
   updated_at = now()
 
 -- :name find-user-by-id :? :1
-SELECT * FROM users WHERE id = :id
+SELECT id as user_id, * FROM users WHERE id = :id
 
 -- :name find-user-by-username :? :1
-SELECT * FROM users WHERE username = :username
+SELECT id as user_id, * FROM users WHERE username = :username
 
 -- :name find-user-by-email :? :1
-SELECT * FROM users WHERE email = :email
+SELECT id as user_id, * FROM users WHERE email = :email

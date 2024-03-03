@@ -1,8 +1,11 @@
 (ns realworld.infra.web.controllers.user
   (:require [failjure.core :as f]
+            [realworld.domain.adapter.gateway.token-gateway :as token-gateway]
             [realworld.domain.command.user.use-case :as user-usecase]
+            [realworld.domain.query.service :as query-service]
             [realworld.infra.web.routes.utils :refer [route-data]]
-            [ring.util.http-response :refer [ok unprocessable-entity]]))
+            [ring.util.http-response :refer [not-found ok unauthorized
+                                             unprocessable-entity]]))
 
 (defn register [req]
   (let [user-use-case (-> (route-data req) :use-cases :user)
@@ -29,3 +32,15 @@
                   :bio (:bio result)
                   :image (:image result)}})
       (unprocessable-entity {:errors {:body [(name (:message result))]}}))))
+
+(defn get-current-user [{:keys [token] :as req}]
+  (let [{:keys [gateway query-service]} (-> (route-data req))]
+    (if-let [user-id (:user-id (token-gateway/verify (:token-gateway gateway) token))]
+      (if-let [user (query-service/get-current-user query-service {:actor-id user-id})]
+        (ok {:user {:email (:email user)
+                    :token token
+                    :username (:username user)
+                    :bio (:bio user)
+                    :image (:image user)}})
+        (not-found {:errors {:body ["User not found"]}}))
+      (unauthorized {:errors {:body ["Unauthorized"]}}))))

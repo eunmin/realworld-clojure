@@ -1,48 +1,41 @@
 (ns realworld.infra.web.routes.api
-  (:require
-   [realworld.infra.web.controllers.health :as health]
-   [realworld.infra.web.controllers.user :as user]
-   [realworld.infra.web.middleware.exception :as exception]
-   [realworld.infra.web.middleware.formats :as formats]
-   [integrant.core :as ig]
-   [reitit.coercion.spec :as spec]
-   [realworld.infra.web.inputs :as inputs]
-   [reitit.ring.coercion :as coercion]
-   [reitit.ring.middleware.muuntaja :as muuntaja]
-   [reitit.ring.middleware.parameters :as parameters]
-
-   [reitit.swagger :as swagger]))
+  (:require [integrant.core :as ig]
+            [realworld.infra.web.controllers.health :as health]
+            [realworld.infra.web.controllers.user :as user]
+            [realworld.infra.web.inputs :as inputs]
+            [realworld.infra.web.middleware.core :refer [wrap-required-token
+                                                         wrap-optional-token]]
+            [realworld.infra.web.middleware.exception :as exception]
+            [realworld.infra.web.middleware.formats :as formats]
+            [reitit.coercion.spec :as spec]
+            [reitit.ring.coercion :as coercion]
+            [reitit.ring.middleware.muuntaja :as muuntaja]
+            [reitit.ring.middleware.parameters :as parameters]
+            [reitit.swagger :as swagger]))
 
 (def route-data
   {:coercion   spec/coercion
    :muuntaja   formats/instance
    :swagger    {:id ::api}
-   :middleware [;; query-params & form-params
-                parameters/parameters-middleware
-                  ;; content-negotiation
+   :middleware [parameters/parameters-middleware
                 muuntaja/format-negotiate-middleware
-                  ;; encoding response body
                 muuntaja/format-response-middleware
-                  ;; exception handling
                 coercion/coerce-exceptions-middleware
-                  ;; decoding request body
                 muuntaja/format-request-middleware
-                  ;; coercing request parameters
                 coercion/coerce-request-middleware
-                  ;; exception handling
                 exception/wrap-exception]})
 
 ;; Routes
-(defn api-routes [_opts]
+(defn api-routes [opts]
   [["/swagger.json"
     {:get {:no-doc  true
-           :swagger {:info {:title "realworld API"}}
+           :swagger {:info {:title "realworld API"}
+                     :securityDefinitions {:apiAuth {:type "apiKey"
+                                                     :name "Authorization"
+                                                     :in "header"}}}
            :handler (swagger/create-swagger-handler)}}]
    ["/health"
     {:get health/healthcheck!}]
-   ["/user"
-    {:name :api/get-current-user
-     :get {:handler (constantly {:status 200})}}]
    ["/users"
     [""
      {:name :api/reigster
@@ -51,7 +44,12 @@
     ["/login"
      {:name :api/authentication
       :post {:parameters {:body ::inputs/authentication}
-             :handler user/authentication}}]]])
+             :handler user/authentication}}]]
+   ["/user"
+    {:name :api/get-current-user
+     :get {:swagger {:security [{:apiAuth []}]}
+           :handler user/get-current-user
+           :middleware [wrap-required-token]}}]])
 
 (derive :reitit.routes/api :reitit/routes)
 

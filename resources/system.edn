@@ -38,7 +38,9 @@
  {:base-path "/api"
   :env #ig/ref :system/env
   :query-fn #ig/ref :db.sql/query-fn
-  :use-cases {:user #ig/ref :use-case/user}}
+  :use-cases {:user #ig/ref :use-case/user}
+  :gateway {:token-gateway #ig/ref :gateway/jwt-token-gateway}
+  :query-service #ig/ref :service/query-service}
 
  :router/routes
  {:routes #ig/refset :reitit/routes}
@@ -73,4 +75,6 @@
 
  :gateway/jwt-token-gateway {:secret #or [#env JWT_SECRET "secret"]}
 
- :gateway/bcrypt-password-gateway {}}
+ :gateway/bcrypt-password-gateway {}
+
+ :service/query-service {:query-fn #ig/ref :db.sql/query-fn}}

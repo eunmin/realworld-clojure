@@ -13,5 +13,6 @@
   (verify [_ token]
     (try
       (jwt/unsign token secret)
-      (catch Exception _
+      (catch Exception e
+        (println e)
         nil))))
