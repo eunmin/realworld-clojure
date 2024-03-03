@@ -44,9 +44,14 @@
     {:name :api/get-current-user
      :get {:handler (constantly {:status 200})}}]
    ["/users"
-    {:name :api/reigster
-     :post {:parameters {:body ::inputs/register}
-            :handler user/register}}]])
+    [""
+     {:name :api/reigster
+      :post {:parameters {:body ::inputs/register}
+             :handler user/register}}]
+    ["/login"
+     {:name :api/authentication
+      :post {:parameters {:body ::inputs/authentication}
+             :handler user/authentication}}]]])
 
 (derive :reitit.routes/api :reitit/routes)
 

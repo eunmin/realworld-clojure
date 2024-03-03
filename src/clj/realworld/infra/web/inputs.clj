@@ -8,3 +8,5 @@
 (s/def ::password string?)
 
 (s/def ::register (s/keys :req-un [::username ::email ::password]))
+
+(s/def ::authentication (s/keys :req-un [::email ::password]))

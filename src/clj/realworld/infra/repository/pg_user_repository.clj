@@ -1,5 +1,6 @@
 (ns realworld.infra.repository.pg-user-repository
-  (:require [next.jdbc.date-time]
+  (:require [realworld.infra.util.hugsql]
+            [next.jdbc.date-time]
             [realworld.domain.adapter.repository.user-repository :refer [UserRepository]]
             [realworld.infra.manager.pg-tx-manager :refer [UpdateQueryFn]]))
 

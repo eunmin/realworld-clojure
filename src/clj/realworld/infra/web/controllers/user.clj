@@ -16,3 +16,16 @@
                   :bio ""
                   :image nil}})
       (unprocessable-entity {:errors {:body [(name (:message result))]}}))))
+
+(defn authentication [req]
+  (let [user-use-case (-> (route-data req) :use-cases :user)
+        input (-> req :parameters :body)
+        command (select-keys input [:email :password])
+        result (user-usecase/authentication user-use-case command)]
+    (if (f/ok? result)
+      (ok {:user {:email (:email input)
+                  :token (:token result)
+                  :username (:username result)
+                  :bio (:bio result)
+                  :image (:image result)}})
+      (unprocessable-entity {:errors {:body [(name (:message result))]}}))))

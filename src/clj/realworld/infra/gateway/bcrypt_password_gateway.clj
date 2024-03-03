@@ -6,4 +6,5 @@
   PasswordGateway
   (hash-password [_ password]
     (hashers/derive password))
-  (valid-password? [this hashed-password password]))
+  (valid-password? [_ hashed-password password]
+    (:valid (hashers/verify password hashed-password))))
