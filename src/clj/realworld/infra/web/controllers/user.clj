@@ -1,17 +1,18 @@
 (ns realworld.infra.web.controllers.user
-  (:require
-   #_[realworld.domain.command.user.use-case :as user-usecase]
-   #_[realworld.infra.web.error :refer [error-response]]
-   #_[realworld.infra.web.routes.utils :refer [route-data]]
-   [failjure.core :as f]
-   [reitit.core :as r :refer [match->path match-by-name]]
-   [ring.util.http-response :refer [created]]))
+  (:require [failjure.core :as f]
+            [realworld.domain.command.user.use-case :as user-usecase]
+            [realworld.infra.web.routes.utils :refer [route-data]]
+            [ring.util.http-response :refer [ok unprocessable-entity]]))
 
-(defn register [{:keys [:reitit.core/router] :as req}]
-  #_(let [user-use-case (-> (route-data req) :use-cases :user)]
-      (f/if-let-ok? [result (user-usecase/register user-use-case (-> req :parameters :body))]
-                    (let [url (-> router
-                                  (match-by-name :api/get-current-user)
-                                  match->path)]
-                      (created url (dissoc result :hashed-password)))
-                    (error-response result))))
+(defn register [req]
+  (let [user-use-case (-> (route-data req) :use-cases :user)
+        input (-> req :parameters :body)
+        command (select-keys input [:email :username :password])
+        result (user-usecase/registration user-use-case command)]
+    (if (f/ok? result)
+      (ok {:user {:email (:email input)
+                  :token (:token result)
+                  :username (:username input)
+                  :bio ""
+                  :image nil}})
+      (unprocessable-entity {:errors {:body [(name (:message result))]}}))))

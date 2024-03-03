@@ -1,17 +1,19 @@
 (ns realworld.infra.repository.pg-user-repository
-  #_(:require [next.jdbc.date-time]))
+  (:require [next.jdbc.date-time]
+            [realworld.domain.adapter.repository.user-repository :refer [UserRepository]]
+            [realworld.infra.manager.pg-tx-manager :refer [UpdateQueryFn]]))
 
-;; (defrecord PGUserRepository [query-fn]
-;;   Tx
-;;   (update-query-fn [this query-fn]
-;;     (assoc this :query-fn query-fn))
+(defrecord PgUserRepository [query-fn]
+  UpdateQueryFn
+  (update-query-fn [this query-fn]
+    (assoc this :query-fn query-fn))
 
-;;   UserRepository
-;;   (create [_ user]
-;;     (query-fn :insert-user user))
-;;   (find-by-id [_ id]
-;;     (query-fn :find-user-by-id {:id id}))
-;;   (find-by-username [_ username]
-;;     (query-fn :find-user-by-username {:username username}))
-;;   (find-by-email [_ email]
-;;     (query-fn :find-user-by-email {:email email})))
+  UserRepository
+  (save [_ user]
+    (query-fn :save user))
+  (find-by-id [_ id]
+    (query-fn :find-user-by-id {:id id}))
+  (find-by-username [_ username]
+    (query-fn :find-user-by-username {:username username}))
+  (find-by-email [_ email]
+    (query-fn :find-user-by-email {:email email})))

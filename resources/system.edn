@@ -61,16 +61,16 @@
            :test {:jdbc-url "jdbc:postgresql://localhost:5432/realworld_clj_test?user=realworld&password=realworld"},
            :prod {:jdbc-url #env JDBC_URL}}
 
- :db/tx {:conn #ig/ref :db.sql/connection
-         :query-fn #ig/ref :db.sql/query-fn}
+ :db/tx-manager {:conn #ig/ref :db.sql/connection
+                 :query-fn #ig/ref :db.sql/query-fn}
 
- :use-case/user {:tx #ig/ref :db/tx
-                 :user-repo #ig/ref :repo/user
-                 :token-gateway #ig/ref :gateway/token
-                 :password-service #ig/ref :service/password}
+ :use-case/user {:with-tx #ig/ref :db/tx-manager
+                 :password-gateway #ig/ref :gateway/bcrypt-password-gateway
+                 :token-gateway #ig/ref :gateway/jwt-token-gateway
+                 :user-repository #ig/ref :repository/pg-user-repository}
 
- :repo/user {:query-fn #ig/ref :db.sql/query-fn}
+ :repository/pg-user-repository {:query-fn #ig/ref :db.sql/query-fn}
 
- :gateway/token {:secret #or [#env JWT_SECRET "secret"]}
+ :gateway/jwt-token-gateway {:secret #or [#env JWT_SECRET "secret"]}
 
- :service/password {}}
+ :gateway/bcrypt-password-gateway {}}

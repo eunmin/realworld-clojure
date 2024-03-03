@@ -3,6 +3,8 @@
 
 (s/def ::token string?)
 
+(s/def ::user-id string?)
+
 (def token-expires-in-sec (* 60 60 24))
 
 (s/def ::username (s/and string? #(> (count %) 3) #(< (count %) 128)))

@@ -31,7 +31,7 @@
       email' (or (make-email email) (f/fail :invalid-email))
       password' (or (make-password password) (f/fail :invalid-password))
       hashed-password (or (password-gateway/hash-password password-gateway password')
-                          (f/fail :invalid-password))
+                          (f/fail :invalid-password2))
       _ (with-tx [user-repository]
           (fn [user-repository]
             (attempt-all
@@ -39,7 +39,7 @@
                   (f/fail :username-already-exists))
               _ (when-not (nil? (user-repository/find-by-email user-repository email'))
                   (f/fail :email-already-exists))
-              user (make-user {:id user-id
+              user (make-user {:user-id user-id
                                :username username'
                                :email email'
                                :hashed-password hashed-password
@@ -59,7 +59,7 @@
                (f/fail :user-not-found))
       _ (when-not (password-gateway/valid-password? password-gateway (:hashed-password user) password')
           (f/fail :invalid-password))
-      token (token-gateway/generate token-gateway (:id user) token-expires-in-sec)]
+      token (token-gateway/generate token-gateway (:user-id user) token-expires-in-sec)]
      {:token token
       :username (:username user)
       :bio (:bio user)
@@ -117,12 +117,12 @@
                (attempt-all
                 [followee (or (user-repository/find-by-username user-repository username)
                               (f/fail :user-not-found))
-                 already-following? (user-repository/has-following user-repository follower-id (:id followee))
+                 already-following? (user-repository/has-following user-repository follower-id (:user-id followee))
                  _ (when already-following?
                      (f/fail :already-following))
-                 _ (when (= follower-id (:id followee))
+                 _ (when (= follower-id (:user-id followee))
                      (f/fail :cant-follow-self))
-                 _ (user-repository/follow user-repository follower-id (:id followee))]
+                 _ (user-repository/follow user-repository follower-id (:user-id followee))]
                 followee)))]
      {:username (:username user)
       :bio (:bio user)

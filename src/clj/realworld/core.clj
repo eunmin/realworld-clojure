@@ -13,7 +13,17 @@
    [realworld.infra.web.routes.api]
 
    [kit.edge.db.sql.conman]
-   [kit.edge.db.sql.migratus])
+   [kit.edge.db.sql.migratus]
+
+   ;; Use Cases
+   [realworld.domain.command.user.use-case :refer [->UserUseCaseImpl]]
+
+   ;; Repositories
+   [realworld.infra.repository.pg-user-repository :refer [->PgUserRepository]]
+
+   ;; Gateways
+   [realworld.infra.gateway.bcrypt-password-gateway :refer [->BcryptPasswordGateway]]
+   [realworld.infra.gateway.jwt-token-gateway :refer [->JwtTokenGateway]])
   (:gen-class))
 
 ;; log uncaught exceptions in threads
@@ -42,14 +52,18 @@
 (defn -main [& _]
   (start-app))
 
-;; (defmethod ig/init-key :use-case/user [_ {:keys [tx user-repo token-gateway password-service]}]
-;;   (->UserUseCaseImpl tx user-repo token-gateway password-service))
+(defmethod ig/init-key :use-case/user [_ {:keys [with-tx
+                                                 password-gateway
+                                                 token-gateway
+                                                 user-repository]}]
+  (->UserUseCaseImpl with-tx password-gateway token-gateway user-repository))
 
-;; (defmethod ig/init-key :repo/user [_ {:keys [query-fn]}]
-;;   (->PGUserRepository query-fn))
+(defmethod ig/init-key :repository/pg-user-repository [_ {:keys [query-fn]}]
+  (->PgUserRepository query-fn))
 
-;; (defmethod ig/init-key :gateway/token [_ {:keys [secret]}]
-;;   (->JWTTokenGateway secret))
+(defmethod ig/init-key :gateway/bcrypt-password-gateway [_ _]
+  (->BcryptPasswordGateway))
 
-;; (defmethod ig/init-key :service/password [_ _]
-;;   (->BCryptPasswordService))
+(defmethod ig/init-key :gateway/jwt-token-gateway [_ {:keys [secret]}]
+  (->JwtTokenGateway secret))
+

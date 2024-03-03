@@ -3,7 +3,7 @@
             [buddy.sign.util :as util]
             [realworld.domain.adapter.gateway.token-gateway :refer [TokenGateway]]))
 
-(defrecord JWTTokenGateway [secret]
+(defrecord JwtTokenGateway [secret]
   TokenGateway
   (generate [_ user-id expires-in-sec]
     (let [now (util/timestamp)]
