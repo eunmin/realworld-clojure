@@ -19,7 +19,7 @@
                                   :keywordize true}
                          :cookies true
                          :session {:flash true
-                                   :cookie-name "example.conduit"
+                                   :cookie-name "realworld-clojure"
                                    :cookie-attrs {:max-age 86400
                                                   :http-only true
                                                   :same-site :strict}}
@@ -37,7 +37,8 @@
  :reitit.routes/api
  {:base-path "/api"
   :env #ig/ref :system/env
-  :query-fn #ig/ref :db.sql/query-fn}
+  :query-fn #ig/ref :db.sql/query-fn
+  :use-cases {:user #ig/ref :use-case/user}}
 
  :router/routes
  {:routes #ig/refset :reitit/routes}
@@ -56,6 +57,20 @@
   :migrate-on-init? true}
 
  :db.sql/connection
- #profile {:dev {:jdbc-url "jdbc:postgresql://localhost:5432/conduit_clj?user=constacts&password="},
-           :test {:jdbc-url "jdbc:postgresql://localhost:5432/conduit_test?user=conduit&password=conduit"},
-           :prod {:jdbc-url #env JDBC_URL}}}
+ #profile {:dev {:jdbc-url "jdbc:postgresql://localhost:5432/realworld_clj?user=realworld&password="},
+           :test {:jdbc-url "jdbc:postgresql://localhost:5432/realworld_clj_test?user=realworld&password=realworld"},
+           :prod {:jdbc-url #env JDBC_URL}}
+
+ :db/tx {:conn #ig/ref :db.sql/connection
+         :query-fn #ig/ref :db.sql/query-fn}
+
+ :use-case/user {:tx #ig/ref :db/tx
+                 :user-repo #ig/ref :repo/user
+                 :token-gateway #ig/ref :gateway/token
+                 :password-service #ig/ref :service/password}
+
+ :repo/user {:query-fn #ig/ref :db.sql/query-fn}
+
+ :gateway/token {:secret #or [#env JWT_SECRET "secret"]}
+
+ :service/password {}}

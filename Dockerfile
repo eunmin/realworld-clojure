@@ -8,8 +8,8 @@ RUN clj -Sforce -T:build all
 
 FROM azul/zulu-openjdk-alpine:17
 
-COPY --from=build /target/conduit-standalone.jar /conduit/conduit-standalone.jar
+COPY --from=build /target/realworld-standalone.jar /realworld/realworld-standalone.jar
 
 EXPOSE $PORT
 
-ENTRYPOINT exec java $JAVA_OPTS -jar /conduit/conduit-standalone.jar
+ENTRYPOINT exec java $JAVA_OPTS -jar /realworld/realworld-standalone.jar

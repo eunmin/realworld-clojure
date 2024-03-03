@@ -1,4 +1,4 @@
-# conduit
+# realworld-clojure
 
 Start a [REPL](#repls) in your editor or terminal of choice.
 

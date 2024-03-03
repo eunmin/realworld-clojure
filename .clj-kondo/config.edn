@@ -1,0 +1,2 @@
+{:lint-as {failjure.core/if-let-failed? clojure.core/let
+           failjure.core/if-let-ok? clojure.core/let}}
