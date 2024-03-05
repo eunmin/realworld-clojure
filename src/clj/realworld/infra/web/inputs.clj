@@ -10,3 +10,5 @@
 (s/def ::register (s/keys :req-un [::username ::email ::password]))
 
 (s/def ::authentication (s/keys :req-un [::email ::password]))
+
+(s/def ::profile (s/keys :req-un [::username]))

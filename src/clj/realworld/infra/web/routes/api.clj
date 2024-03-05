@@ -49,7 +49,17 @@
     {:name :api/get-current-user
      :get {:swagger {:security [{:apiAuth []}]}
            :handler user/get-current-user
-           :middleware [wrap-required-token]}}]])
+           :middleware [wrap-required-token]}}]
+   ["/profiles" {:parameters {:path ::inputs/profile}}
+    ["/:username" {:get {:swagger {:security [{} {:apiAuth []}]}
+                         :handler user/get-profile
+                         :middleware [wrap-optional-token]}}]
+    ["/:username/follow" {:post {:swagger {:security [{:apiAuth []}]}
+                                 :handler user/follow
+                                 :middleware [wrap-required-token]}}]
+    ["/:username/unfollow" {:post {:swagger {:security [{:apiAuth []}]}
+                                   :handler user/unfollow
+                                   :middleware [wrap-required-token]}}]]])
 
 (derive :reitit.routes/api :reitit/routes)
 

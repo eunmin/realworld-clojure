@@ -17,3 +17,22 @@ SELECT id as user_id, * FROM users WHERE username = :username
 
 -- :name find-user-by-email :? :1
 SELECT id as user_id, * FROM users WHERE email = :email
+
+-- :name find-profile-with-following :? :1 
+SELECT username, bio, image, 
+  CASE WHEN f.created_at IS null THEN false ELSE true END following 
+FROM users u 
+LEFT JOIN followings f ON u.id = f.following_id AND f.user_id = :actor-id
+WHERE username = :username
+
+-- :name find-profile :? :1
+SELECT username, bio, image , false as following FROM users WHERE username = :username
+
+-- :name follow :! :n
+INSERT INTO followings (user_id, following_id) VALUES (:follower-id, :followee-id)
+
+-- :name unfollow :! :n
+DELETE FROM followings WHERE user_id = :follower-id AND following_id = :followee-id
+
+-- :name find-following :? :1
+SELECT COUNT(*) FROM followings WHERE user_id = :follower-id AND following_id = :followee-id

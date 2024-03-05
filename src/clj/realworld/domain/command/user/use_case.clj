@@ -127,7 +127,7 @@
      {:username (:username user)
       :bio (:bio user)
       :image (:image user)
-      :following? true}))
+      :following true}))
 
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   ;; Unfollow User
@@ -147,4 +147,4 @@
      {:username (:username user)
       :bio (:bio user)
       :image (:image user)
-      :following? true})))
+      :following false})))

@@ -12,7 +12,7 @@
 
   (verify [_ token]
     (try
-      (jwt/unsign token secret)
+      (:user-id (jwt/unsign token secret))
       (catch Exception e
         (println e)
         nil))))
