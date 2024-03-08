@@ -1,4 +1,4 @@
--- :name save :! :n
+-- :name save-user :! :n
 INSERT INTO users (id, username, email, hashed_password, bio, image, created_at) 
 VALUES (:user-id, :username, :email, :hashed-password, :bio, :image, :created-at)
 ON CONFLICT (id) DO UPDATE SET

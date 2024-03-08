@@ -2,15 +2,18 @@
   (:require [clojure.spec.alpha :as s]
             [clojure.string :as str]))
 
+(s/def ::article-id string?)
+
 (s/def ::slug string?)
 
 (defn make-slug [slug]
   slug)
 
 (defn ->slug [title]
-  (-> title
-      (str/lower-case)
-      (str/replace #" " "-")))
+  (when title
+    (-> title
+        (str/lower-case)
+        (str/replace #" " "-"))))
 
 (s/def ::title string?)
 
@@ -35,9 +38,10 @@
 (s/def ::tag string?)
 
 (defn make-tag [tag]
-  tag)
+  (when (s/valid? ::tag tag)
+    tag))
 
-(s/def ::article-id string?)
+(s/def ::author-id string?)
 
 (s/def ::user-id string?)
 

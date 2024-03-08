@@ -18,9 +18,9 @@
    ;; Use Cases
    [realworld.domain.command.user.use-case :refer [->UserUseCaseImpl]]
 
-   ;; Repositories
-   [realworld.infra.repository.pg-user-repository :refer [->PgUserRepository]]
-   [realworld.infra.repository.pg-query-service :refer [->PgQueryService]]
+   ;; Database
+   [realworld.infra.database.pg-user-repository :refer [->PgUserRepository]]
+   [realworld.infra.database.pg-query-service :refer [->PgQueryService]]
 
    ;; Gateways
    [realworld.infra.gateway.bcrypt-password-gateway :refer [->BcryptPasswordGateway]]

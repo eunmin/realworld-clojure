@@ -1,17 +1,61 @@
 (ns realworld.domain.command.article.entity.article
   (:require [clojure.spec.alpha :as s]
-            #_[realworld.domain.command.article.value]))
+            [realworld.domain.command.article.value :as value :refer [->slug]]))
 
-(s/def ::article (s/keys :req-un [::id
-                                  ::slug
-                                  ::title
-                                  ::description
-                                  ::body
-                                  ::tags
-                                  ::created-at
-                                  ::updated-at
-                                  ::favorited
-                                  ::favorites-count
-                                  ::author-id]))
+(s/def ::article (s/keys :req-un [::value/article-id
+                                  ::value/slug
+                                  ::value/title
+                                  ::value/description
+                                  :article/body
+                                  ::value/tags
+                                  ::value/created-at
+                                  ::value/updated-at
+                                  ::value/favorited
+                                  ::value/favorites-count
+                                  ::value/author-id]))
 
-(s/explain-data ::article {})
+(defrecord Article [article-id
+                    slug
+                    title
+                    description
+                    body
+                    tags
+                    created-at
+                    updated-at
+                    favorited
+                    favorites-count
+                    author-id])
+
+(defn make-article [{:keys [article-id title description body tags created-at author-id]}]
+  (let [article (map->Article {:article-id article-id
+                               :slug (->slug title)
+                               :title title
+                               :description description
+                               :body body
+                               :tags tags
+                               :created-at created-at
+                               :updated-at nil
+                               :favorited false
+                               :favorited-count 0
+                               :author-id author-id})]
+    (when (s/valid? ::article article)
+      article)))
+
+(defn update-article [article actor-id {:keys [title description body]}]
+  (when (= (:author-id article) actor-id)
+    (let [article' (update article
+                           :title (or title (:title article))
+                           :description (or description (:description article))
+                           :body (or body (:body article))
+                           :slug (or (->slug title) (:slug article)))]
+      (when (s/valid? ::article article')
+        article'))))
+
+(defn deletable? [article actor-id]
+  (= (:author-id article) actor-id))
+
+(defn increse-favorite-count [article]
+  (update article :favorites-count inc))
+
+(defn decrese-favorite-count [article]
+  (update article :favorites-count dec))

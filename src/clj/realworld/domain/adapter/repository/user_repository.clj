@@ -2,7 +2,7 @@
 
 (defprotocol UserRepository
   (save [this user])
-  (find-by-id [this id])
+  (find-by-id [this user-id])
   (find-by-username [this username])
   (find-by-email [this email])
   (follow [this follower-id followee-id])

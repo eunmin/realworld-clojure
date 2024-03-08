@@ -36,4 +36,4 @@
 
 (defmethod ig/init-key :router/core
   [_ {:keys [routes] :as opts}]
-  (ring/router ["" opts routes]))
+  (ring/router ["" opts routes] {:conflicts nil}))

@@ -1,4 +1,4 @@
-(ns realworld.infra.repository.pg-user-repository
+(ns realworld.infra.database.pg-user-repository
   (:require [realworld.infra.util.hugsql]
             [next.jdbc.date-time]
             [realworld.domain.adapter.repository.user-repository :refer [UserRepository]]
@@ -11,7 +11,7 @@
 
   UserRepository
   (save [_ user]
-    (query-fn :save user))
+    (query-fn :save-user user))
   (find-by-id [_ id]
     (query-fn :find-user-by-id {:id id}))
   (find-by-username [_ username]

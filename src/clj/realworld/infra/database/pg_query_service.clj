@@ -1,4 +1,4 @@
-(ns realworld.infra.repository.pg-query-service
+(ns realworld.infra.database.pg-query-service
   (:require [realworld.domain.query.service :refer [QueryService]]))
 
 (defrecord PgQueryService [query-fn]
