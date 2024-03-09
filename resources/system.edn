@@ -38,7 +38,8 @@
  {:base-path "/api"
   :env #ig/ref :system/env
   :query-fn #ig/ref :db.sql/query-fn
-  :use-cases {:user #ig/ref :use-case/user}
+  :use-cases {:user #ig/ref :use-case/user
+              :article #ig/ref :use-case/article}
   :gateway {:token-gateway #ig/ref :gateway/jwt-token-gateway}
   :query-service #ig/ref :service/query-service}
 
@@ -67,9 +68,23 @@
                  :query-fn #ig/ref :db.sql/query-fn}
 
  :use-case/user {:with-tx #ig/ref :db/tx-manager
-                 :password-gateway #ig/ref :gateway/bcrypt-password-gateway
                  :token-gateway #ig/ref :gateway/jwt-token-gateway
+                 :password-gateway #ig/ref :gateway/bcrypt-password-gateway
                  :user-repository #ig/ref :repository/pg-user-repository}
+
+ :use-case/article {:with-tx #ig/ref :db/tx-manager
+                    :token-gateway #ig/ref :gateway/jwt-token-gateway
+                    :user-repository #ig/ref :repository/pg-user-repository
+                    :article-repository #ig/ref :repository/pg-article-repository
+                    :favorite-repository #ig/ref :repository/pg-favorite-repository
+                    :comment-repository #ig/ref :repository/pg-comment-repository}
+
+ :repository/pg-article-repository {:query-fn #ig/ref :db.sql/query-fn
+                                    :conn #ig/ref :db.sql/connection}
+
+ :repository/pg-comment-repository {:query-fn #ig/ref :db.sql/query-fn}
+
+ :repository/pg-favorite-repository {:query-fn #ig/ref :db.sql/query-fn}
 
  :repository/pg-user-repository {:query-fn #ig/ref :db.sql/query-fn}
 

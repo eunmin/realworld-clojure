@@ -16,9 +16,13 @@
    [kit.edge.db.sql.migratus]
 
    ;; Use Cases
-   [realworld.domain.command.user.use-case :refer [->UserUseCaseImpl]]
+   [realworld.domain.command.user.use-case :refer [map->UserUseCaseImpl]]
+   [realworld.domain.command.article.use-case :refer [map->ArticleUseCaseImpl]]
 
    ;; Database
+   [realworld.infra.database.pg-article-repository :refer [->PgArticleRepository]]
+   [realworld.infra.database.pg-comment-repository :refer [->PgCommentRepository]]
+   [realworld.infra.database.pg-favorite-repository :refer [->PgFavoriteRepository]]
    [realworld.infra.database.pg-user-repository :refer [->PgUserRepository]]
    [realworld.infra.database.pg-query-service :refer [->PgQueryService]]
 
@@ -53,11 +57,20 @@
 (defn -main [& _]
   (start-app))
 
-(defmethod ig/init-key :use-case/user [_ {:keys [with-tx
-                                                 password-gateway
-                                                 token-gateway
-                                                 user-repository]}]
-  (->UserUseCaseImpl with-tx password-gateway token-gateway user-repository))
+(defmethod ig/init-key :use-case/user [_ deps]
+  (map->UserUseCaseImpl deps))
+
+(defmethod ig/init-key :use-case/article [_ deps]
+  (map->ArticleUseCaseImpl deps))
+
+(defmethod ig/init-key :repository/pg-article-repository [_ {:keys [conn query-fn]}]
+  (->PgArticleRepository conn query-fn))
+
+(defmethod ig/init-key :repository/pg-comment-repository [_ {:keys [query-fn]}]
+  (->PgCommentRepository query-fn))
+
+(defmethod ig/init-key :repository/pg-favorite-repository [_ {:keys [query-fn]}]
+  (->PgFavoriteRepository query-fn))
 
 (defmethod ig/init-key :repository/pg-user-repository [_ {:keys [query-fn]}]
   (->PgUserRepository query-fn))
@@ -70,3 +83,5 @@
 
 (defmethod ig/init-key :service/query-service [_ {:keys [query-fn]}]
   (->PgQueryService query-fn))
+
+

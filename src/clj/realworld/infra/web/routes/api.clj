@@ -86,6 +86,7 @@
          :post {:name :api/create-article
                 :summary "Create Articles"
                 :swagger {:security (:required security)}
+                :parameters {:body ::inputs/create-article}
                 :middleware [wrap-required-token]
                 :handler article/create-article}}]
     ["/feed" {:get {:name :api/feed-articles

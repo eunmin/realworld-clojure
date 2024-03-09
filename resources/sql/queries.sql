@@ -36,3 +36,25 @@ DELETE FROM followings WHERE user_id = :follower-id AND following_id = :followee
 
 -- :name find-following :? :1
 SELECT COUNT(*) FROM followings WHERE user_id = :follower-id AND following_id = :followee-id
+
+-- :name save-article :! :n
+INSERT INTO articles (id, slug, title, description, body, tags, author_id, favorites_count, created_at, updated_at)
+VALUES (:article-id, :slug, :title, :description, :body, :tags, :author-id, :favorites-count, :created-at, :updated-at)
+ON CONFLICT (id) DO UPDATE SET
+  slug = :slug,
+  title = :title,
+  description = :description,
+  body = :body,
+  tags = :tags,
+  author_id = :author-id,
+  favorites_count = :favorites-count,
+  updated_at = now()
+
+-- :name save-find-article-by-id :? :1
+SELECT id as article-id, * FROM articles WHERE id = :article-id
+
+-- :name save-find-article-by-slug :? :1
+SELECT id as article-id, * FROM articles WHERE slug = :slug
+
+-- :name delete-article :! :n
+DELETE FROM articles WHERE id = :article-id

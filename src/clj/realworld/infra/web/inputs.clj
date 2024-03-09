@@ -12,3 +12,13 @@
 (s/def ::authentication (s/keys :req-un [::email ::password]))
 
 (s/def ::profile (s/keys :req-un [::username]))
+
+(s/def ::title string?)
+
+(s/def ::description string?)
+
+(s/def ::body string?)
+
+(s/def ::tag-list (s/coll-of string?))
+
+(s/def ::create-article (s/keys :req-un [::title ::description ::body ::tag-list]))
