@@ -62,7 +62,16 @@
 
 (defn get-comments [{:keys [token] :as req}])
 
-(defn delete-comment [{:keys [token] :as req}])
+(defn delete-comment [{:keys [token] :as req}]
+  (let [{:keys [use-cases]} (-> (route-data req))
+        slug (-> req :parameters :path :slug)
+        comment-id (-> req :parameters :path :comment-id)
+        result (article-use-case/delete-comment (:article use-cases) {:token token
+                                                                      :slug slug
+                                                                      :comment-id comment-id})]
+    (if (f/ok? result)
+      (ok {})
+      (unprocessable-entity {:errors {:body [(name (:message result))]}}))))
 
 (defn favorite [{:keys [token] :as req}])
 

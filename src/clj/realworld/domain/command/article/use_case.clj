@@ -169,7 +169,7 @@
              [_ (or (article-repository/find-by-slug article-repository slug')
                     (f/fail :delete-comment-error/article-not-found))
               comment (comment-repository/find-by-id comment-repository comment-id)
-              _ (when (comment/deleteable? comment actor-id)
+              _ (when-not (comment/deletable? comment actor-id)
                   (f/fail :delete-comment-error/author-mismatch))]
              (comment-repository/delete comment-repository comment))))]
      {:slug slug

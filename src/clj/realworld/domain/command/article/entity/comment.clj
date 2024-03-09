@@ -27,6 +27,6 @@
       comment)))
 
 
-(defn deleteable? [comment actor-id]
+(defn deletable? [comment actor-id]
   (= (:author-id comment) actor-id))
 

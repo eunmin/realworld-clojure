@@ -123,6 +123,7 @@
       ["/:comment-id" {:delete {:name :api/delete-comment
                                 :summary "Delete Comment"
                                 :swagger {:security (:required security)}
+                                :parameters {:path {:comment-id string?}}
                                 :middleware [wrap-required-token]
                                 :handler article/delete-comment}}]]
      ["/favorite" {:post {:name :api/favorite-article
