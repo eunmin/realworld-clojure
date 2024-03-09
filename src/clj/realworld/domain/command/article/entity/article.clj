@@ -36,7 +36,7 @@
                                :created-at created-at
                                :updated-at nil
                                :favorited false
-                               :favorited-count 0
+                               :favorites-count 0
                                :author-id author-id})]
     (when (s/valid? ::article article)
       article)))

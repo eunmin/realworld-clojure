@@ -50,11 +50,44 @@ ON CONFLICT (id) DO UPDATE SET
   favorites_count = :favorites-count,
   updated_at = now()
 
--- :name save-find-article-by-id :? :1
+-- :name find-article-by-id :? :1
 SELECT id as article-id, * FROM articles WHERE id = :article-id
 
--- :name save-find-article-by-slug :? :1
+-- :name find-article-by-slug :? :1
 SELECT id as article-id, * FROM articles WHERE slug = :slug
 
 -- :name delete-article :! :n
 DELETE FROM articles WHERE id = :article-id
+
+-- :name save-comment :! :n
+INSERT INTO comments (id, body, article_id, author_id, created_at, updated_at)
+VALUES (:comment-id, :body, :article-id, :author-id, :created-at, :updated-at)
+ON CONFLICT (id) DO UPDATE SET
+  body = :body,
+  article_id = :article-id,
+  author_id = :author-id,
+  updated_at = now()
+
+-- :name find-comment-by-id :? :1
+SELECT id as comment-id, * FROM comments WHERE id = :comment-id
+
+-- :name delete-comment :! :n
+DELETE FROM comments WHERE id = :comment-id
+
+-- :name save-favorite :! :n
+INSERT INTO favorites (user_id, article_id, created_at)
+VALUES (:user-id, :article-id, :created-at)
+ON CONFLICT (user_id, article_id) DO NOTHING
+
+-- :name find-favorite-by-id :? :1
+SELECT * FROM favorites WHERE user_id = :user-id AND article_id = :article-id
+
+-- :name delete-favorite :! :n
+DELETE FROM favorites WHERE user_id = :user-id AND article_id = :article-id
+
+-- :name get-article :? :1
+SELECT a.slug, a.title, a.description, a.body, a.tags, a.created_at, a.updated_at, 
+  false as favorited, a.favorites_count, u.username, u.bio, u.image, false  as following
+FROM articles a 
+LEFT JOIN users u ON a.author_id = u.id 
+WHERE a.slug = :slug

@@ -2,7 +2,7 @@
   (:require [realworld.domain.adapter.repository.article-repository :refer [ArticleRepository]]
             [realworld.infra.manager.pg-tx-manager :refer [UpdateQueryFn]]))
 
-(defn- to-string-array [conn coll]
+(defn- to-string-pgarray [conn coll]
   (.createArrayOf conn "varchar" (into-array String coll)))
 
 (defrecord PgArticleRepository [conn query-fn]
@@ -12,7 +12,7 @@
 
   ArticleRepository
   (save [_ article]
-    (query-fn :save-article (update article :tags #(to-string-array (.getConnection conn) %))))
+    (query-fn :save-article (update article :tags #(to-string-pgarray (.getConnection conn) %))))
 
   (find-by-id [_ article-id]
     (query-fn :find-article-by-id {:id article-id}))

@@ -8,6 +8,13 @@
     (assoc this :query-fn query-fn))
 
   FavoriteRepository
-  (save [_ favorite])
-  (find-by-id [_ favorite-id])
-  (delete [_ favorite]))
+  (save [_ favorite]
+    (query-fn :save-favorite favorite))
+
+  (find-by-id [_ favorite-id]
+    (query-fn :find-favorite-by-id {:user-id (:user-id favorite-id)
+                                    :article-id (:article-id favorite-id)}))
+
+  (delete [_ {:keys [favorite-id]}]
+    (query-fn :delete-favorite {:user-id (:user-id favorite-id)
+                                :article-id (:article-id favorite-id)})))

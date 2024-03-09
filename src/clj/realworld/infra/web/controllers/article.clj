@@ -9,7 +9,10 @@
 
 (defn feed-articles [{:keys [token] :as req}])
 
-(defn get-article [{:keys [token] :as req}])
+(defn get-article [{:keys [token] :as req}]
+  (let [{:keys [query-service]} (-> (route-data req))
+        slug (-> req :parameters :path :slug)]
+    (ok {:article (query-service/get-article query-service {:slug slug})})))
 
 (defn create-article [{:keys [token] :as req}]
   (let [{:keys [use-cases query-service]} (-> (route-data req))

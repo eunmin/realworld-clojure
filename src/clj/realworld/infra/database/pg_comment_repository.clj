@@ -8,6 +8,11 @@
     (assoc this :query-fn query-fn))
 
   CommentRepository
-  (save [_ comment])
-  (find-by-id [_ comment-id])
-  (delete [_ comment]))
+  (save [_ comment]
+    (query-fn :save-comment comment))
+
+  (find-by-id [_ comment-id]
+    (query-fn :find-comment-by-id {:id comment-id}))
+
+  (delete [_ comment]
+    (query-fn :delete-comment {:comment-id (:comment-id comment)})))
