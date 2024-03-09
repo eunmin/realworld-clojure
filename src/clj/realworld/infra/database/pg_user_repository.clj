@@ -11,7 +11,7 @@
 
   UserRepository
   (save [_ user]
-    (query-fn :save-user user))
+    (pos? (query-fn :save-user user)))
 
   (find-by-id [_ user-id]
     (query-fn :find-user-by-id {:id user-id}))
@@ -23,12 +23,12 @@
     (query-fn :find-user-by-email {:email email}))
 
   (follow [_ follower-id followee-id]
-    (query-fn :follow {:follower-id follower-id
-                       :followee-id followee-id}))
+    (pos? (query-fn :follow {:follower-id follower-id
+                             :followee-id followee-id})))
 
   (unfollow [_ follower-id followee-id]
-    (query-fn :unfollow {:follower-id follower-id
-                         :followee-id followee-id}))
+    (pos? (query-fn :unfollow {:follower-id follower-id
+                               :followee-id followee-id})))
 
   (has-following [_ follower-id followee-id]
     (pos? (:count (query-fn :find-following {:follower-id follower-id

@@ -9,10 +9,10 @@
 
   CommentRepository
   (save [_ comment]
-    (query-fn :save-comment comment))
+    (pos? (query-fn :save-comment comment)))
 
   (find-by-id [_ comment-id]
     (query-fn :find-comment-by-id {:comment-id comment-id}))
 
   (delete [_ comment]
-    (query-fn :delete-comment {:comment-id (:comment-id comment)})))
+    (pos? (query-fn :delete-comment {:comment-id (:comment-id comment)}))))

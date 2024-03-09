@@ -26,7 +26,6 @@
     (when (s/valid? ::comment comment)
       comment)))
 
-
 (defn deletable? [comment actor-id]
   (= (:author-id comment) actor-id))
 

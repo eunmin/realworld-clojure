@@ -1,8 +1,6 @@
 (ns realworld.infra.database.pg-query-service
-  (:require [realworld.domain.query.service :refer [QueryService]]))
-
-(defn from-pgarray [arr]
-  (into [] (.getArray arr)))
+  (:require [realworld.domain.query.service :refer [QueryService]]
+            [realworld.infra.database.pg-util :refer [from-pgarray]]))
 
 (defn ->article [{:keys [slug
                          title

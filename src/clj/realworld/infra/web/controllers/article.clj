@@ -73,8 +73,42 @@
       (ok {})
       (unprocessable-entity {:errors {:body [(name (:message result))]}}))))
 
-(defn favorite [{:keys [token] :as req}])
+(defn favorite [{:keys [token] :as req}]
+  (let [{:keys [use-cases query-service]} (-> (route-data req))
+        slug (-> req :parameters :path :slug)
+        result (article-use-case/favorite-article (:article use-cases) {:token token
+                                                                        :slug slug})]
+    (if (f/ok? result)
+      (let [author (query-service/get-profile query-service {:username (:author-username result)})]
+        (ok {:article {:slug slug
+                       :title (:title result)
+                       :description (:description result)
+                       :body (:body result)
+                       :tag-list (:tag-list result)
+                       :created-at (:created-at result)
+                       :updated-at (:updated-at result)
+                       :favorited true
+                       :favorites-count (:favorites-count result)
+                       :author author}}))
+      (unprocessable-entity {:errors {:body [(name (:message result))]}}))))
 
-(defn unfavorite [{:keys [token] :as req}])
+(defn unfavorite [{:keys [token] :as req}]
+  (let [{:keys [use-cases query-service]} (-> (route-data req))
+        slug (-> req :parameters :path :slug)
+        result (article-use-case/unfavorite-article (:article use-cases) {:token token
+                                                                          :slug slug})]
+    (if (f/ok? result)
+      (let [author (query-service/get-profile query-service {:username (:author-username result)})]
+        (ok {:article {:slug slug
+                       :title (:title result)
+                       :description (:description result)
+                       :body (:body result)
+                       :tag-list (:tag-list result)
+                       :created-at (:created-at result)
+                       :updated-at (:updated-at result)
+                       :favorited false
+                       :favorites-count (:favorites-count result)
+                       :author author}}))
+      (unprocessable-entity {:errors {:body [(name (:message result))]}}))))
 
 (defn get-tags [{:keys [token] :as req}])
