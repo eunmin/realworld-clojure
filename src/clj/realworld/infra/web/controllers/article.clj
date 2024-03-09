@@ -36,7 +36,14 @@
 
 (defn update-article [{:keys [token] :as req}])
 
-(defn delete-article [{:keys [token] :as req}])
+(defn delete-article [{:keys [token] :as req}]
+  (let [{:keys [use-cases]} (-> (route-data req))
+        slug (-> req :parameters :path :slug)
+        result (article-use-case/delete-article (:article use-cases) {:slug slug
+                                                                      :token token})]
+    (if (f/ok? result)
+      (ok {})
+      (unprocessable-entity {:errors {:body [(name (:message result))]}}))))
 
 (defn add-comment [{:keys [token] :as req}])
 

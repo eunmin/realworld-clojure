@@ -51,10 +51,10 @@ ON CONFLICT (id) DO UPDATE SET
   updated_at = now()
 
 -- :name find-article-by-id :? :1
-SELECT id as article-id, * FROM articles WHERE id = :article-id
+SELECT id as article_id, * FROM articles WHERE id = :article-id
 
 -- :name find-article-by-slug :? :1
-SELECT id as article-id, * FROM articles WHERE slug = :slug
+SELECT id as article_id, * FROM articles WHERE slug = :slug
 
 -- :name delete-article :! :n
 DELETE FROM articles WHERE id = :article-id
@@ -69,7 +69,7 @@ ON CONFLICT (id) DO UPDATE SET
   updated_at = now()
 
 -- :name find-comment-by-id :? :1
-SELECT id as comment-id, * FROM comments WHERE id = :comment-id
+SELECT id as comment_id, * FROM comments WHERE id = :comment-id
 
 -- :name delete-comment :! :n
 DELETE FROM comments WHERE id = :comment-id

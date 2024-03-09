@@ -94,10 +94,9 @@
                     :swagger {:security (:required security)}
                     :middleware [wrap-required-token]
                     :handler article/feed-articles}}]
-    ["/:slug"
+    ["/:slug" {:parameters {:path {:slug string?}}}
      ["" {:get {:name :api/get-article
                 :summary "Get Article"
-                :parameters {:path {:slug string?}}
                 :handler article/get-article}
           :put {:name :api/update-article
                 :summary "Update Article"
