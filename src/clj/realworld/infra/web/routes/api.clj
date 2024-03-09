@@ -86,7 +86,7 @@
          :post {:name :api/create-article
                 :summary "Create Articles"
                 :swagger {:security (:required security)}
-                :parameters {:body ::inputs/create-article}
+                :parameters {:body {:article ::inputs/create-article}}
                 :middleware [wrap-required-token]
                 :handler article/create-article}}]
     ["/feed" {:get {:name :api/feed-articles
@@ -117,8 +117,9 @@
            :post {:name :api/add-comment
                   :summary "Add Comments to an Article"
                   :swagger {:security (:required security)}
+                  :parameters {:body {:comment ::inputs/add-comments}}
                   :middleware [wrap-required-token]
-                  :handler article/add-comment}}]
+                  :handler article/add-comments}}]
       ["/:comment-id" {:delete {:name :api/delete-comment
                                 :summary "Delete Comment"
                                 :swagger {:security (:required security)}

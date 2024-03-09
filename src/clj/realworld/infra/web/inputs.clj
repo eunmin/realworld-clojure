@@ -22,3 +22,5 @@
 (s/def ::tag-list (s/coll-of string?))
 
 (s/def ::create-article (s/keys :req-un [::title ::description ::body ::tag-list]))
+
+(s/def ::add-comments (s/keys :req-un [::body]))

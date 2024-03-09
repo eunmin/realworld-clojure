@@ -17,7 +17,7 @@
 (defn create-article [{:keys [token] :as req}]
   (let [{:keys [use-cases query-service]} (-> (route-data req))
         article-use-case (:article use-cases)
-        input (-> req :parameters :body)
+        input (-> req :parameters :body :article)
         command (assoc (select-keys input [:title :description :body :tag-list]) :token token)
         result (article-use-case/create-article article-use-case command)]
     (if (f/ok? result)
@@ -45,7 +45,20 @@
       (ok {})
       (unprocessable-entity {:errors {:body [(name (:message result))]}}))))
 
-(defn add-comment [{:keys [token] :as req}])
+(defn add-comments [{:keys [token] :as req}]
+  (let [{:keys [use-cases query-service]} (-> (route-data req))
+        slug (-> req :parameters :path :slug)
+        input (-> req :parameters :body :comment)
+        command (merge {:token token :slug slug} (select-keys input [:body]))
+        result (article-use-case/add-comments (:article use-cases) command)]
+    (if (f/ok? result)
+      (let [author (query-service/get-profile query-service {:username (:author-username result)})]
+        (ok {:comment-id (:comment-id result)
+             :body (:body input)
+             :createdAt (:created-at result)
+             :updatedAt nil
+             :author author}))
+      (unprocessable-entity {:errors {:body [(name (:message result))]}}))))
 
 (defn get-comments [{:keys [token] :as req}])
 
