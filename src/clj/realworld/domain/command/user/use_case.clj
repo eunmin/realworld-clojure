@@ -70,7 +70,6 @@
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   ;; Update User
 
-  ;; TODO: 옵셔널 필드 처리
   (update-user [_ {:keys [token username email password bio image]}]
     (attempt-all
      [username' (when username

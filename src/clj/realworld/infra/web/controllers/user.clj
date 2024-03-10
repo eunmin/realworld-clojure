@@ -3,6 +3,7 @@
             [realworld.domain.adapter.gateway.token-gateway :as token-gateway]
             [realworld.domain.command.user.use-case :as user-usecase]
             [realworld.domain.query.query-service :as query-service]
+            [realworld.infra.web.error :refer [->errors]]
             [realworld.infra.web.routes.utils :refer [route-data]]
             [ring.util.http-response :refer [not-found ok unauthorized
                                              unprocessable-entity]]))
@@ -18,7 +19,7 @@
                   :username (:username input)
                   :bio ""
                   :image nil}})
-      (unprocessable-entity {:errors {:body [(name (:message result))]}}))))
+      (unprocessable-entity (->errors result)))))
 
 (defn authentication [req]
   (let [user-use-case (-> (route-data req) :use-cases :user)
@@ -31,7 +32,7 @@
                   :username (:username result)
                   :bio (:bio result)
                   :image (:image result)}})
-      (unprocessable-entity {:errors {:body [(name (:message result))]}}))))
+      (unprocessable-entity (->errors result)))))
 
 (defn get-current-user [{:keys [token] :as req}]
   (let [{:keys [gateway query-service]} (-> (route-data req))]
@@ -42,8 +43,8 @@
                     :username (:username user)
                     :bio (:bio user)
                     :image (:image user)}})
-        (not-found {:errors {:body ["User not found"]}}))
-      (unauthorized {:errors {:body ["Unauthorized"]}}))))
+        (not-found (->errors {:message :controller/user-not-found})))
+      (unauthorized (->errors {:message :controller/unauthorized})))))
 
 (defn update-user [{:keys [token] :as req}]
   (let [user-use-case (-> (route-data req) :use-cases :user)
@@ -56,7 +57,7 @@
                   :username (:username result)
                   :bio (:bio result)
                   :image (:image result)}})
-      (unprocessable-entity {:errors {:body [(name (:message result))]}}))))
+      (unprocessable-entity (->errors result)))))
 
 (defn get-profile [{:keys [token] :as req}]
   (let [{:keys [gateway query-service]} (-> (route-data req))
@@ -68,7 +69,7 @@
         profile (query-service/get-profile query-service params)]
     (if profile
       (ok {:profile profile})
-      (not-found {:errors {:body ["Profile not found"]}}))))
+      (not-found (->errors {:message :controller/profile-not-found})))))
 
 (defn follow [{:keys [token] :as req}]
   (let [user-use-case (-> (route-data req) :use-cases :user)
@@ -80,7 +81,7 @@
                                          :bio
                                          :image
                                          :following])})
-      (unprocessable-entity {:errors {:body [(name (:message result))]}}))))
+      (unprocessable-entity (->errors result)))))
 
 (defn unfollow [{:keys [token] :as req}]
   (let [user-use-case (-> (route-data req) :use-cases :user)
@@ -92,4 +93,4 @@
                                          :bio
                                          :image
                                          :following])})
-      (unprocessable-entity {:errors {:body [(name (:message result))]}}))))
+      (unprocessable-entity (->errors result)))))

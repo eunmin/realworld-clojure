@@ -1,9 +1,10 @@
 (ns realworld.infra.web.controllers.article
   (:require [failjure.core :as f]
-            [realworld.infra.web.routes.utils :refer [route-data]]
-            [realworld.domain.query.query-service :as query-service]
             [realworld.domain.adapter.gateway.token-gateway :as token-gateway]
             [realworld.domain.command.article.use-case :as article-use-case]
+            [realworld.domain.query.query-service :as query-service]
+            [realworld.infra.web.error :refer [->errors]]
+            [realworld.infra.web.routes.utils :refer [route-data]]
             [ring.util.http-response :refer [ok unprocessable-entity]]))
 
 (defn list-articles [{:keys [token] :as req}])
@@ -33,7 +34,7 @@
                        :favorited false
                        :favorites-count 0
                        :author author}}))
-      (unprocessable-entity {:errors {:body [(name (:message result))]}}))))
+      (unprocessable-entity (->errors result)))))
 
 (defn update-article [{:keys [token] :as req}]
   (let [{:keys [use-cases query-service]} (-> (route-data req))
@@ -53,7 +54,7 @@
                        :favorited (:favorited result)
                        :favorites-count (:favorites-count result)
                        :author author}}))
-      (unprocessable-entity {:errors {:body [(name (:message result))]}}))))
+      (unprocessable-entity (->errors result)))))
 
 (defn delete-article [{:keys [token] :as req}]
   (let [{:keys [use-cases]} (-> (route-data req))
@@ -62,7 +63,7 @@
                                                                       :token token})]
     (if (f/ok? result)
       (ok {})
-      (unprocessable-entity {:errors {:body [(name (:message result))]}}))))
+      (unprocessable-entity (->errors result)))))
 
 (defn add-comments [{:keys [token] :as req}]
   (let [{:keys [use-cases query-service]} (-> (route-data req))
@@ -77,7 +78,7 @@
              :createdAt (:created-at result)
              :updatedAt nil
              :author author}))
-      (unprocessable-entity {:errors {:body [(name (:message result))]}}))))
+      (unprocessable-entity (->errors result)))))
 
 (defn get-comments [{:keys [token] :as req}]
   (let [{:keys [query-service gateway]} (-> (route-data req))
@@ -95,7 +96,7 @@
                                                                       :comment-id comment-id})]
     (if (f/ok? result)
       (ok {})
-      (unprocessable-entity {:errors {:body [(name (:message result))]}}))))
+      (unprocessable-entity (->errors result)))))
 
 (defn favorite [{:keys [token] :as req}]
   (let [{:keys [use-cases query-service]} (-> (route-data req))
@@ -114,7 +115,7 @@
                        :favorited true
                        :favorites-count (:favorites-count result)
                        :author author}}))
-      (unprocessable-entity {:errors {:body [(name (:message result))]}}))))
+      (unprocessable-entity (->errors result)))))
 
 (defn unfavorite [{:keys [token] :as req}]
   (let [{:keys [use-cases query-service]} (-> (route-data req))
@@ -133,7 +134,7 @@
                        :favorited false
                        :favorites-count (:favorites-count result)
                        :author author}}))
-      (unprocessable-entity {:errors {:body [(name (:message result))]}}))))
+      (unprocessable-entity (->errors result)))))
 
 (defn get-tags [req]
   (let [{:keys [query-service]} (-> (route-data req))]
