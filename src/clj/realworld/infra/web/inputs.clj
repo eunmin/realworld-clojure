@@ -11,6 +11,14 @@
 
 (s/def ::authentication (s/keys :req-un [::email ::password]))
 
+(s/def ::bio string?)
+
+(s/def ::value (s/nilable string?))
+
+(s/def :nilable/image (s/keys :req-un [::value]))
+
+(s/def ::update-user (s/keys :opt-un [::username ::email ::password ::bio :nilable/image]))
+
 (s/def ::profile (s/keys :req-un [::username]))
 
 (s/def ::title string?)

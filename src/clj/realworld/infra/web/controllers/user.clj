@@ -45,6 +45,19 @@
         (not-found {:errors {:body ["User not found"]}}))
       (unauthorized {:errors {:body ["Unauthorized"]}}))))
 
+(defn update-user [{:keys [token] :as req}]
+  (let [user-use-case (-> (route-data req) :use-cases :user)
+        input (-> req :parameters :body :user)
+        command (assoc (select-keys input [:email :username :password :bio :image]) :token token)
+        result (user-usecase/update-user user-use-case command)]
+    (if (f/ok? result)
+      (ok {:user {:email (:email result)
+                  :token (:token result)
+                  :username (:username result)
+                  :bio (:bio result)
+                  :image (:image result)}})
+      (unprocessable-entity {:errors {:body [(name (:message result))]}}))))
+
 (defn get-profile [{:keys [token] :as req}]
   (let [{:keys [gateway query-service]} (-> (route-data req))
         user-id (when token

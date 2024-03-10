@@ -60,7 +60,9 @@
      :put {:name :api/update-user
            :summary "Update User"
            :swagger {:security (:required security)}
-           :handler identity}}]
+           :parameters {:body {:user ::inputs/update-user}}
+           :middleware [wrap-required-token]
+           :handler user/update-user}}]
    ["/profiles" {:parameters {:path ::inputs/profile}}
     ["/:username" {:get {:name :api/get-profile
                          :summary "Get Profile"

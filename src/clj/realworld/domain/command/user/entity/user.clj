@@ -32,5 +32,14 @@
     (when (s/valid? ::user user)
       user)))
 
-(defn update-user [user data]
-  (merge user (select-keys data [:username :email :hashed-password :bio :image])))
+(defn update-user [user {:keys [username email hashed-password bio image]}]
+  (let [user' (merge user
+                     {:username (or username (:username user))
+                      :email (or email (:email user))
+                      :hashed-password (or hashed-password (:hashed-password user))
+                      :bio (or bio (:bio user))
+                      :image (if image
+                               (:value image)
+                               (:image user))})]
+    (when (s/valid? ::user user')
+      user')))

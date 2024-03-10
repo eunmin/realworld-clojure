@@ -11,11 +11,8 @@
 
   ArticleRepository
   (save [_ article]
-    (pos? (query-fn :save-article (update article :tags #(to-string-pgarray (.getConnection conn) %)))))
-
-  (find-by-id [_ article-id]
-    (when-let [article (query-fn :find-article-by-id {:id article-id})]
-      (update article :tags from-pgarray)))
+    (pos? (query-fn :save-article (update article :tags
+                                          #(to-string-pgarray (.getConnection conn) %)))))
 
   (find-by-slug [_ slug]
     (when-let [article (query-fn :find-article-by-slug {:slug slug})]
