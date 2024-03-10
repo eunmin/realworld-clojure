@@ -14,11 +14,11 @@
                                     :created-at created-at})))
 
   (find-by-id [_ favorite-id]
-    (let [{:keys [user-id
-                  article-id
-                  created-at]} (query-fn :find-favorite-by-id
-                                         {:user-id (:user-id favorite-id)
-                                          :article-id (:article-id favorite-id)})]
+    (when-let [{:keys [user-id
+                       article-id
+                       created-at]} (query-fn :find-favorite-by-id
+                                              {:user-id (:user-id favorite-id)
+                                               :article-id (:article-id favorite-id)})]
       {:favorite-id {:user-id user-id
                      :article-id article-id}
        :created-at created-at}))

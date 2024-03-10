@@ -10,7 +10,6 @@
                                   ::value/tags
                                   ::value/created-at
                                   ::value/updated-at
-                                  ::value/favorited
                                   ::value/favorites-count
                                   ::value/author-id]))
 
@@ -22,7 +21,6 @@
                     tags
                     created-at
                     updated-at
-                    favorited
                     favorites-count
                     author-id])
 
@@ -35,21 +33,22 @@
                                :tags tags
                                :created-at created-at
                                :updated-at nil
-                               :favorited false
                                :favorites-count 0
                                :author-id author-id})]
     (when (s/valid? ::article article)
       article)))
 
-(defn update-article [article actor-id {:keys [title description body]}]
-  (when (= (:author-id article) actor-id)
-    (let [article' (update article
-                           :title (or title (:title article))
-                           :description (or description (:description article))
-                           :body (or body (:body article))
-                           :slug (or (->slug title) (:slug article)))]
-      (when (s/valid? ::article article')
-        article'))))
+(defn update-article [article {:keys [title description body]}]
+  (let [article' (merge article
+                        {:title (or title (:title article))
+                         :description (or description (:description article))
+                         :body (or body (:body article))
+                         :slug (or (->slug title) (:slug article))})]
+    (when (s/valid? ::article article')
+      article')))
+
+(defn editable? [article actor-id]
+  (= (:author-id article) actor-id))
 
 (defn deletable? [article actor-id]
   (= (:author-id article) actor-id))

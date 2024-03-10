@@ -72,10 +72,13 @@
   (update-article [_ {:keys [token slug title description body]}]
     (attempt-all
      [slug' (or (make-slug slug) (f/fail :update-article-error/invalid-slug))
-      title' (or (make-title title) (f/fail :update-article-error/invalid-title))
-      description' (or (make-description description)
-                       (f/fail :update-article-error/invalid-description))
-      body' (or (make-article-body body) (f/fail :update-article-error/invalid-body))
+      title' (when title
+               (or (make-title title) (f/fail :update-article-error/invalid-title)))
+      description' (when description
+                     (or (make-description description)
+                         (f/fail :update-article-error/invalid-description)))
+      body' (when body
+              (or (make-article-body body) (f/fail :update-article-error/invalid-body)))
       actor-id (or (token-gateway/verify token-gateway token)
                    (f/fail :update-article-error/invalid-token))
       result (with-tx [article-repository favorite-repository user-repository]
@@ -85,15 +88,18 @@
                                (f/fail :update-article-error/article-not-found))
                    author (or (user-repository/find-by-id user-repository (:author-id article))
                               (f/fail :update-article-error/author-not-found))
-                   article' (or (article/update-article article actor-id
-                                                        {:title title'
-                                                         :description description'
-                                                         :body body'})
-                                (f/fail :update-article-error/author-mismatch))
+                   _ (when-not (article/editable? article actor-id)
+                       (f/fail :update-article-error/edit-permission-denied))
+                   article' (or (article/update-article article {:title title'
+                                                                 :description description'
+                                                                 :body body'})
+                                (f/fail :update-article-error/invalid-article))
                    _ (article-repository/save article-repository article')
-                   favorited (favorite-repository/find-by-id favorite-repository
-                                                             (make-favorite-id (:article-id article')
-                                                                               actor-id))]
+                   favorited (->> (make-favorite-id (:article-id article')
+                                                    actor-id)
+                                  (favorite-repository/find-by-id favorite-repository)
+                                  nil?
+                                  not)]
                   {:article article'
                    :author author
                    :favorited favorited})))]
@@ -104,7 +110,7 @@
       :created-at (-> result :article :created-at)
       :updated-at (-> result :article :updated-at)
       :tags (-> result :article :tags)
-      :favroites-count (-> result :article :favorites-count)
+      :favorites-count (-> result :article :favorites-count)
       :author-username (:username (:author result))
       :favorited (:favorited result)}))
 
@@ -122,7 +128,7 @@
              [article (or (article-repository/find-by-slug article-repository slug')
                           (f/fail :delete-article-error/article-not-found))
               _ (when-not (article/deletable? article actor-id)
-                  (f/fail :delete-article-error/author-mismatch))]
+                  (f/fail :delete-article-error/delete-permission-denied))]
              (article-repository/delete article-repository article))))]
      {:slug slug}))
 
@@ -170,7 +176,7 @@
                     (f/fail :delete-comment-error/article-not-found))
               comment (comment-repository/find-by-id comment-repository comment-id)
               _ (when-not (comment/deletable? comment actor-id)
-                  (f/fail :delete-comment-error/author-mismatch))]
+                  (f/fail :delete-comment-error/delete-permission-denied))]
              (comment-repository/delete comment-repository comment))))]
      {:slug slug
       :comment-id comment-id}))

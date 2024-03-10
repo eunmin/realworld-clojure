@@ -101,6 +101,7 @@
           :put {:name :api/update-article
                 :summary "Update Article"
                 :swagger {:security (:required security)}
+                :parameters {:body {:article ::inputs/update-article}}
                 :middleware [wrap-required-token]
                 :handler article/update-article}
           :delete {:name :api/delete-article

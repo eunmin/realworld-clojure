@@ -23,4 +23,7 @@
 
 (s/def ::create-article (s/keys :req-un [::title ::description ::body ::tag-list]))
 
+(s/def ::update-article (s/keys :opt-un [::title ::description ::body]))
+
 (s/def ::add-comments (s/keys :req-un [::body]))
+

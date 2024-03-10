@@ -34,7 +34,25 @@
                        :author author}}))
       (unprocessable-entity {:errors {:body [(name (:message result))]}}))))
 
-(defn update-article [{:keys [token] :as req}])
+(defn update-article [{:keys [token] :as req}]
+  (let [{:keys [use-cases query-service]} (-> (route-data req))
+        slug (-> req :parameters :path :slug)
+        input (select-keys (-> req :parameters :body :article) [:title :description :body])
+        command (merge {:token token :slug slug} input)
+        result (article-use-case/update-article (:article use-cases) command)]
+    (if (f/ok? result)
+      (let [author (query-service/get-profile query-service {:username (:author-username result)})]
+        (ok {:article {:slug (:slug result)
+                       :title (:title result)
+                       :description (:description result)
+                       :body (:body result)
+                       :tag-list (:tags result)
+                       :created-at (:created-at result)
+                       :updated-at (:updated-at result)
+                       :favorited (:favorited result)
+                       :favorites-count (:favorites-count result)
+                       :author author}}))
+      (unprocessable-entity {:errors {:body [(name (:message result))]}}))))
 
 (defn delete-article [{:keys [token] :as req}]
   (let [{:keys [use-cases]} (-> (route-data req))
