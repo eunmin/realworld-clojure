@@ -129,4 +129,6 @@
                        :author author}}))
       (unprocessable-entity {:errors {:body [(name (:message result))]}}))))
 
-(defn get-tags [{:keys [token] :as req}])
+(defn get-tags [req]
+  (let [{:keys [query-service]} (-> (route-data req))]
+    (ok {:article (query-service/get-tags query-service)})))

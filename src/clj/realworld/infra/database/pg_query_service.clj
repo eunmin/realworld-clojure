@@ -40,6 +40,9 @@
       (query-fn :find-profile {:username username})))
 
   (get-article [_ {:keys [actor-id slug]}]
-    (->article (query-fn :get-article {:slug slug}))))
+    (->article (query-fn :get-article {:slug slug})))
+
+  (get-tags [_]
+    (from-pgarray (:array-agg (query-fn :get-tags {})))))
 
 

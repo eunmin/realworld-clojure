@@ -91,3 +91,6 @@ SELECT a.slug, a.title, a.description, a.body, a.tags, a.created_at, a.updated_a
 FROM articles a 
 LEFT JOIN users u ON a.author_id = u.id 
 WHERE a.slug = :slug
+
+-- :name get-tags :? :1
+SELECT array_agg(DISTINCT c) FROM (SELECT unnest(tags) FROM articles) AS dt(c)
