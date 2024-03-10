@@ -1,5 +1,6 @@
 (ns realworld.domain.command.user.value
-  (:require [clojure.spec.alpha :as s]))
+  (:require [clojure.spec.alpha :as s]
+            [miner.strgen :as sg]))
 
 (s/def ::token string?)
 
@@ -13,15 +14,16 @@
   (when (s/valid? ::username username)
     username))
 
-(def ^:private email-regex #"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,63}$")
+(def email-regex #"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,63}$")
 
-(s/def ::email (s/and string? #(re-matches email-regex %)))
+(s/def ::email (s/spec (s/and string? #(re-matches email-regex %))
+                       :gen #(sg/string-generator email-regex)))
 
 (defn make-email [email]
   (when (s/valid? ::email email)
     email))
 
-(def ^:private password-regex #"^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$")
+(def password-regex #"^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$")
 
 (s/def ::password (s/and string? #(re-matches password-regex %)))
 

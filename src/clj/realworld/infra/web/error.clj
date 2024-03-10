@@ -31,14 +31,14 @@
    :update-user-error/user-not-found (:user-not-found messages)
    :update-user-error/username-already-exists (:username-already-exists messages)
 
-   :follow-user-error/invalid-token nil
-   :follow-user-error/invalid-username nil
+   :follow-user-error/invalid-token (:unauthorized messages)
+   :follow-user-error/invalid-username "팔로우할 사용자를 찾을 수 없습니다."
    :follow-user-error/user-not-found "팔로우할 사용자를 찾을 수 없습니다."
-   :follow-user-error/already-following nil
-   :follow-user-error/cant-follow-self nil
+   :follow-user-error/already-following "이미 팔로우 중인 사용자입니다."
+   :follow-user-error/cant-follow-self "자신을 팔로우할 수 없습니다."
 
-   :unfollow-user-error/invalid-token nil
-   :unfollow-user-error/invalid-username nil
+   :unfollow-user-error/invalid-token (:unauthorized messages)
+   :unfollow-user-error/invalid-username "팔로우할 사용자를 찾을 수 없습니다."
    :unfollow-user-error/user-not-found "팔로우를 취소할 사용자를 찾을 수 없습니다."
 
    :create-article-error/invalid-token nil
