@@ -92,5 +92,12 @@ FROM articles a
 LEFT JOIN users u ON a.author_id = u.id 
 WHERE a.slug = :slug
 
+-- :name get-comments :? :*
+SELECT c.id as comment_id, c.created_at, c.updated_at, c.body, u.username, u.bio, u.image, false as following
+FROM comments c 
+LEFT JOIN articles a ON a.id = c.article_id 
+LEFT JOIN users u ON c.author_id = u.id 
+WHERE a.slug = :slug
+
 -- :name get-tags :? :1
 SELECT array_agg(DISTINCT c) FROM (SELECT unnest(tags) FROM articles) AS dt(c)

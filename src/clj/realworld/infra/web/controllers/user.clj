@@ -2,7 +2,7 @@
   (:require [failjure.core :as f]
             [realworld.domain.adapter.gateway.token-gateway :as token-gateway]
             [realworld.domain.command.user.use-case :as user-usecase]
-            [realworld.domain.query.service :as query-service]
+            [realworld.domain.query.query-service :as query-service]
             [realworld.infra.web.routes.utils :refer [route-data]]
             [ring.util.http-response :refer [not-found ok unauthorized
                                              unprocessable-entity]]))

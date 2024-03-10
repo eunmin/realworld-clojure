@@ -1,7 +1,8 @@
 (ns realworld.infra.web.controllers.article
   (:require [failjure.core :as f]
             [realworld.infra.web.routes.utils :refer [route-data]]
-            [realworld.domain.query.service :as query-service]
+            [realworld.domain.query.query-service :as query-service]
+            [realworld.domain.adapter.gateway.token-gateway :as token-gateway]
             [realworld.domain.command.article.use-case :as article-use-case]
             [ring.util.http-response :refer [ok unprocessable-entity]]))
 
@@ -78,7 +79,12 @@
              :author author}))
       (unprocessable-entity {:errors {:body [(name (:message result))]}}))))
 
-(defn get-comments [{:keys [token] :as req}])
+(defn get-comments [{:keys [token] :as req}]
+  (let [{:keys [query-service gateway]} (-> (route-data req))
+        slug (-> req :parameters :path :slug)
+        user-id (token-gateway/verify (:token-gateway gateway) token)]
+    (ok {:comments (query-service/get-comments query-service {:actor-id user-id
+                                                              :slug slug})})))
 
 (defn delete-comment [{:keys [token] :as req}]
   (let [{:keys [use-cases]} (-> (route-data req))

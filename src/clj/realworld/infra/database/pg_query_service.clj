@@ -1,5 +1,5 @@
 (ns realworld.infra.database.pg-query-service
-  (:require [realworld.domain.query.service :refer [QueryService]]
+  (:require [realworld.domain.query.query-service :refer [QueryService]]
             [realworld.infra.database.pg-util :refer [from-pgarray]]))
 
 (defn ->article [{:keys [slug
@@ -29,6 +29,21 @@
             :image image
             :following following}})
 
+(defn ->comment [{:keys [comment-id
+                         body
+                         created-at
+                         updated-at
+                         username
+                         bio
+                         image]}]
+  {:comment-id comment-id
+   :body body
+   :createdAt created-at
+   :updatedAt updated-at
+   :author {:username username
+            :bio bio
+            :image image}})
+
 (defrecord PgQueryService [query-fn]
   QueryService
   (get-current-user [_ {:keys [actor-id]}]
@@ -41,6 +56,9 @@
 
   (get-article [_ {:keys [actor-id slug]}]
     (->article (query-fn :get-article {:slug slug})))
+
+  (get-comments [_ {:keys [actor-id slug]}]
+    (map ->comment (query-fn :get-comments {:slug slug})))
 
   (get-tags [_]
     (from-pgarray (:array-agg (query-fn :get-tags {})))))
