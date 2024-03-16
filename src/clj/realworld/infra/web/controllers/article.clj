@@ -7,9 +7,11 @@
             [realworld.infra.web.routes.utils :refer [route-data]]
             [ring.util.http-response :refer [ok unprocessable-entity]]))
 
-(defn list-articles [{:keys [token] :as req}])
+(defn list-articles [{:keys [token] :as req}]
+  (throw (ex-info "Not implemented" {})))
 
-(defn feed-articles [{:keys [token] :as req}])
+(defn feed-articles [{:keys [token] :as req}]
+  (throw (ex-info "Not implemented" {})))
 
 (defn get-article [{:keys [token] :as req}]
   (let [{:keys [query-service]} (-> (route-data req))
