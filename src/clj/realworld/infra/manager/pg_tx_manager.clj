@@ -7,5 +7,5 @@
 
 (defmethod ig/init-key :db/tx-manager [_ {:keys [conn query-fn]}]
   (fn [repos f]
-    (jdbc/with-transaction [tx conn]
+    (jdbc/with-transaction [tx conn {isolation :read-committed}]
       (apply f (map #(update-query-fn % (partial query-fn tx)) repos)))))
